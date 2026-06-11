@@ -149,9 +149,28 @@ class Game {
     this._lockPiece();
   }
 
-  /** Поворот (зарезервировано на будущее) */
+  /** Поворот фигуры с Wall Kick */
   rotate() {
-    // Пока ничего не делает
+    if (this.state !== 'playing' || !this.activePiece) return;
+    const piece = this.activePiece;
+
+    // Не вращаем O
+    if (piece.type === 'O') return;
+
+    const rotatedMatrix = piece.getRotatedMatrix();
+    const kicks = getWallKicks(piece.type);
+
+    for (const [colOff, rowOff] of kicks) {
+      const newCol = piece.col + colOff;
+      const newRow = piece.row + rowOff;
+      if (this.board.canPlace(rotatedMatrix, newRow, newCol)) {
+        piece.matrix = rotatedMatrix;
+        piece.col = newCol;
+        piece.row = newRow;
+        return; // успешный поворот
+      }
+    }
+    // Если ни одно смещение не подошло — поворот не удался
   }
 
   /** Пауза / продолжение */

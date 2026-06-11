@@ -27,4 +27,12 @@ class Tetromino {
     t.col = this.col;
     return t;
   }
+
+  /**
+   * Поворачивает матрицу фигуры на 90° по часовой стрелке.
+   * Возвращает новую матрицу, не изменяя оригинал.
+   */
+  getRotatedMatrix() {
+    return rotateMatrixClockwise(this.matrix);
+  }
 }
