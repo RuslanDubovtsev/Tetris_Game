@@ -293,13 +293,14 @@ body::before {
 /* ---------- Панель управления ---------- */
 #controls-panel {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   gap: 12px;
 }
 
 /* ---------- Кнопка в боковой панели ---------- */
 .sidebar-btn {
-  writing-mode: vertical-lr;
+  /* writing-mode: vertical-lr; */
   text-orientation: mixed;
   letter-spacing: 4px;
   padding: 20px 12px;

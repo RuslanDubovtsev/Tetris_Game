@@ -9,6 +9,8 @@ class Game {
     this.renderer = new Renderer('game-canvas');
     this.input = new InputHandler();
     this.randomizer = new BagRandomizer();
+    this.audio = new AudioManager();
+    window._gameAudio = this.audio;
 
     this.state = 'idle'; // idle | playing | paused | gameover
     this.activePiece = null;
@@ -22,8 +24,10 @@ class Game {
     this.lastDropTime = 0;
     this.animationId = null;
 
+
     this._bindInput();
   }
+
 
   /** Инициализация и запуск */
   init() {
@@ -55,6 +59,7 @@ class Game {
     // Сброс hold при рестарте
     this.holdPiece = null;
     this.hasHeldThisTurn = false;
+    this.audio.play('start');
     this.start();
   }
 
@@ -103,6 +108,7 @@ class Game {
     const piece = this.activePiece;
     if (this.board.canPlace(piece.matrix, piece.row, piece.col - 1)) {
       piece.col--;
+      this.audio.play('move');
     }
   }
 
@@ -112,6 +118,7 @@ class Game {
     const piece = this.activePiece;
     if (this.board.canPlace(piece.matrix, piece.row, piece.col + 1)) {
       piece.col++;
+      this.audio.play('move');
     }
   }
 
@@ -142,6 +149,7 @@ class Game {
       piece.row++;
       this.scoreManager.addSoftDropBonus(1);
       this.lastDropTime = performance.now();
+      this.audio.play('softDrop');
     } else {
       this._lockPiece();
     }
@@ -157,6 +165,7 @@ class Game {
       cells++;
     }
     this.scoreManager.addHardDropBonus(cells);
+    this.audio.play('hardDrop');
     this._lockPiece();
   }
 
@@ -178,6 +187,7 @@ class Game {
         piece.matrix = rotatedMatrix;
         piece.col = newCol;
         piece.row = newRow;
+        this.audio.play('rotate');
         return; // успешный поворот
       }
     }
@@ -188,9 +198,11 @@ class Game {
   togglePause() {
     if (this.state === 'playing') {
       this.state = 'paused';
+      this.audio.play('pause');
     } else if (this.state === 'paused') {
       this.state = 'playing';
       this.lastDropTime = performance.now();
+      this.audio.play('pause');
     }
   }
 
@@ -209,12 +221,22 @@ class Game {
     const linesCleared = this.board.clearLines();
     if (linesCleared > 0) {
       this.scoreManager.addClearedLines(linesCleared);
+      // Звук очистки линий
+      if (linesCleared >= 4) {
+        this.audio.play('tetris');
+      } else {
+        this.audio.play('clear');
+      }
+    } else {
+      // Обычная фиксация без очистки линий
+      this.audio.play('lock');
     }
 
     // Проверка Game Over
     if (this.board.isTopReached()) {
       this.state = 'gameover';
       this.activePiece = null;
+      this.audio.play('gameOver');
       return;
     }
 
@@ -285,6 +307,7 @@ class Game {
       this._spawnNext();
     }
 
+    this.audio.play('hold');
     this.hasHeldThisTurn = true;
   }
 

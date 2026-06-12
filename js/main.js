@@ -39,6 +39,15 @@ createPixelStars();
 const game = new Game();
 game.init();
 
+// ---------- Инициализация звука при первом взаимодействии ----------
+function initAudioOnInteraction() {
+  game.audio.init();
+  document.removeEventListener('keydown', initAudioOnInteraction);
+  document.removeEventListener('click', initAudioOnInteraction);
+}
+document.addEventListener('keydown', initAudioOnInteraction);
+document.addEventListener('click', initAudioOnInteraction);
+
 // ---------- Кнопка переключения стиля фигур ----------
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('style-toggle');
@@ -51,6 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
         CONFIG.pieceStyle = 'neon';
         btn.textContent = '🎨 ЦВЕТНОЙ СТИЛЬ';
       }
+    });
+  }
+
+  // ---------- Кнопка Mute ----------
+  const muteBtn = document.getElementById('mute-toggle');
+  if (muteBtn) {
+    muteBtn.addEventListener('click', () => {
+      // Инициализация аудио при клике, если ещё не
+      game.audio.init();
+      const muted = game.audio.toggleMute();
+      muteBtn.textContent = muted ? '🔇 ЗВУК ВЫКЛ' : '🔊 ЗВУК ВКЛ';
     });
   }
 });

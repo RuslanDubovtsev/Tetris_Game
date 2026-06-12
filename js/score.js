@@ -32,6 +32,10 @@ class ScoreManager {
         CONFIG.MIN_DROP_INTERVAL,
         CONFIG.BASE_DROP_INTERVAL - (this.level - 1) * CONFIG.SPEED_DECREASE_PER_LEVEL
       );
+      // Звук повышения уровня (доступ через глобальный game.audio)
+      if (window._gameAudio) {
+        window._gameAudio.play('levelUp');
+      }
     }
   }
 
