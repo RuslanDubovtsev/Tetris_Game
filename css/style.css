@@ -3,6 +3,45 @@
    Пиксельный шрифт: Press Start 2P
    ============================================================ */
 
+/* ---------- CSS-переменные (тема по умолчанию — жёлтый неон) ---------- */
+:root {
+  --canvas-border: #FFEB3B;
+  --canvas-glow-1: rgba(255, 235, 59, 0.4);
+  --canvas-glow-2: rgba(255, 235, 59, 0.15);
+  --canvas-glow-3: rgba(255, 235, 59, 0.08);
+  --canvas-glow-inset: rgba(255, 235, 59, 0.05);
+  --canvas-glow-pulse-1: rgba(255, 235, 59, 0.6);
+  --canvas-glow-pulse-2: rgba(255, 235, 59, 0.25);
+  --canvas-glow-pulse-3: rgba(255, 235, 59, 0.12);
+  --canvas-glow-pulse-inset: rgba(255, 235, 59, 0.08);
+
+  --bg-radial-glow: rgba(255, 235, 59, 0.06);
+  --bg-gradient: linear-gradient(180deg, #0a0a0a 0%, #121205 50%, #0a0a0a 100%);
+
+  --pixel-color: rgba(255, 235, 59, 0.15);
+  --star-color: rgba(255, 235, 59, 0.3);
+  --star-glow-1: rgba(255, 235, 59, 0.1);
+  --star-glow-2: rgba(255, 235, 59, 0.4);
+
+  --corner-color: #FFEB3B;
+  --line-color: #FFEB3B;
+
+  --footer-color: #554400;
+  --footer-glow: rgba(255, 235, 59, 0.1);
+
+  --button-bg: #121200;
+  --button-border: #FFEB3B;
+  --button-text: #FFEB3B;
+  --button-hover-bg: #1a1a00;
+  --button-glow-1: rgba(255, 235, 59, 0.2);
+  --button-glow-2: rgba(255, 235, 59, 0.4);
+  --button-glow-3: rgba(255, 235, 59, 0.05);
+  --button-glow-hover-1: rgba(255, 235, 59, 0.4);
+  --button-glow-hover-2: rgba(255, 235, 59, 0.1);
+  --button-glow-active-1: rgba(255, 235, 59, 0.3);
+  --button-glow-active-2: rgba(255, 235, 59, 0.05);
+}
+
 /* ---------- Сброс и база ---------- */
 *, *::before, *::after {
   margin: 0;
@@ -42,9 +81,9 @@ body::before {
   z-index: 0;
   background:
     /* Центральное свечение */
-    radial-gradient(ellipse 600px 300px at 50% 10%, rgba(255, 235, 59, 0.06) 0%, transparent 100%),
+    radial-gradient(ellipse 600px 300px at 50% 10%, var(--bg-radial-glow) 0%, transparent 100%),
     /* Тёмный градиент */
-    linear-gradient(180deg, #0a0a0a 0%, #121205 50%, #0a0a0a 100%);
+    var(--bg-gradient);
 }
 
 /* Падающие пиксели — анимация */
@@ -63,7 +102,7 @@ body::before {
   position: absolute;
   width: 3px;
   height: 3px;
-  background: rgba(255, 235, 59, 0.15);
+  background: var(--pixel-color);
   image-rendering: pixelated;
   animation: pixelFall linear infinite;
 }
@@ -101,7 +140,7 @@ body::before {
   position: absolute;
   width: 2px;
   height: 2px;
-  background: rgba(255, 235, 59, 0.3);
+  background: var(--star-color);
   image-rendering: pixelated;
   animation: starTwinkle ease-in-out infinite alternate;
 }
@@ -109,11 +148,11 @@ body::before {
 @keyframes starTwinkle {
   0% {
     opacity: 0.1;
-    box-shadow: 0 0 2px rgba(255, 235, 59, 0.1);
+    box-shadow: 0 0 2px var(--star-glow-1);
   }
   100% {
     opacity: 0.8;
-    box-shadow: 0 0 4px rgba(255, 235, 59, 0.4);
+    box-shadow: 0 0 4px var(--star-glow-2);
   }
 }
 
@@ -133,8 +172,8 @@ body::before {
   image-rendering: pixelated;
   background:
     /* Пиксельный угол */
-    linear-gradient(45deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px),
-    linear-gradient(-45deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px);
+    linear-gradient(45deg, var(--corner-color) 0%, var(--corner-color) 8px, transparent 8px),
+    linear-gradient(-45deg, var(--corner-color) 0%, var(--corner-color) 8px, transparent 8px);
   opacity: 0.3;
 }
 
@@ -149,8 +188,8 @@ body::before {
   pointer-events: none;
   image-rendering: pixelated;
   background:
-    linear-gradient(135deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px),
-    linear-gradient(-135deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px);
+    linear-gradient(135deg, var(--corner-color) 0%, var(--corner-color) 8px, transparent 8px),
+    linear-gradient(-135deg, var(--corner-color) 0%, var(--corner-color) 8px, transparent 8px);
   opacity: 0.3;
 }
 
@@ -165,8 +204,8 @@ body::before {
   pointer-events: none;
   image-rendering: pixelated;
   background:
-    linear-gradient(-45deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px),
-    linear-gradient(45deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px);
+    linear-gradient(-45deg, var(--corner-color) 0%, var(--corner-color) 8px, transparent 8px),
+    linear-gradient(45deg, var(--corner-color) 0%, var(--corner-color) 8px, transparent 8px);
   opacity: 0.3;
 }
 
@@ -181,8 +220,8 @@ body::before {
   pointer-events: none;
   image-rendering: pixelated;
   background:
-    linear-gradient(135deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px),
-    linear-gradient(-135deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px);
+    linear-gradient(135deg, var(--corner-color) 0%, var(--corner-color) 8px, transparent 8px),
+    linear-gradient(-135deg, var(--corner-color) 0%, var(--corner-color) 8px, transparent 8px);
   opacity: 0.3;
 }
 
@@ -197,8 +236,8 @@ body::before {
   pointer-events: none;
   background: repeating-linear-gradient(
     90deg,
-    #FFEB3B 0px,
-    #FFEB3B 4px,
+    var(--line-color) 0px,
+    var(--line-color) 4px,
     transparent 4px,
     transparent 8px
   );
@@ -216,8 +255,8 @@ body::before {
   pointer-events: none;
   background: repeating-linear-gradient(
     90deg,
-    #FFEB3B 0px,
-    #FFEB3B 4px,
+    var(--line-color) 0px,
+    var(--line-color) 4px,
     transparent 4px,
     transparent 8px
   );
@@ -248,12 +287,12 @@ body::before {
 /* ---------- Canvas ---------- */
 #game-canvas {
   display: block;
-  border: 3px solid #FFEB3B;
+  border: 3px solid var(--canvas-border);
   box-shadow:
-    0 0 15px rgba(255, 235, 59, 0.4),
-    0 0 40px rgba(255, 235, 59, 0.15),
-    0 0 80px rgba(255, 235, 59, 0.08),
-    inset 0 0 15px rgba(255, 235, 59, 0.05);
+    0 0 15px var(--canvas-glow-1),
+    0 0 40px var(--canvas-glow-2),
+    0 0 80px var(--canvas-glow-3),
+    inset 0 0 15px var(--canvas-glow-inset);
   border-radius: 4px;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
@@ -263,17 +302,17 @@ body::before {
 @keyframes glow-pulse {
   0%, 100% {
     box-shadow:
-      0 0 15px rgba(255, 235, 59, 0.4),
-      0 0 40px rgba(255, 235, 59, 0.15),
-      0 0 80px rgba(255, 235, 59, 0.08),
-      inset 0 0 15px rgba(255, 235, 59, 0.05);
+      0 0 15px var(--canvas-glow-1),
+      0 0 40px var(--canvas-glow-2),
+      0 0 80px var(--canvas-glow-3),
+      inset 0 0 15px var(--canvas-glow-inset);
   }
   50% {
     box-shadow:
-      0 0 25px rgba(255, 235, 59, 0.6),
-      0 0 60px rgba(255, 235, 59, 0.25),
-      0 0 100px rgba(255, 235, 59, 0.12),
-      inset 0 0 20px rgba(255, 235, 59, 0.08);
+      0 0 25px var(--canvas-glow-pulse-1),
+      0 0 60px var(--canvas-glow-pulse-2),
+      0 0 100px var(--canvas-glow-pulse-3),
+      inset 0 0 20px var(--canvas-glow-pulse-inset);
   }
 }
 
@@ -312,25 +351,25 @@ body::before {
   font-family: 'Press Start 2P', 'Courier New', monospace;
   font-size: 10px;
   padding: 12px 20px;
-  background: #121200;
-  color: #FFEB3B;
-  border: 2px solid #FFEB3B;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 2px solid var(--button-border);
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: all 0.15s ease;
   box-shadow:
-    0 0 8px rgba(255, 235, 59, 0.2),
-    inset 0 0 8px rgba(255, 235, 59, 0.05);
+    0 0 8px var(--button-glow-1),
+    inset 0 0 8px var(--button-glow-3);
   image-rendering: pixelated;
   position: relative;
 }
 
 .retro-btn:hover {
-  background: #1a1a00;
+  background: var(--button-hover-bg);
   box-shadow:
-    0 0 15px rgba(255, 235, 59, 0.4),
-    inset 0 0 12px rgba(255, 235, 59, 0.1);
+    0 0 15px var(--button-glow-hover-1),
+    inset 0 0 12px var(--button-glow-hover-2);
   transform: scale(1.02);
 }
 
@@ -338,8 +377,60 @@ body::before {
   transform: scale(0.98);
   background: #0d0d00;
   box-shadow:
-    0 0 5px rgba(255, 235, 59, 0.3),
-    inset 0 0 5px rgba(255, 235, 59, 0.05);
+    0 0 5px var(--button-glow-active-1),
+    inset 0 0 5px var(--button-glow-active-2);
+}
+
+/* ---------- Кнопка HARD MODE (красный неон) ---------- */
+.retro-btn-red {
+  color: #FF1744;
+  border-color: #FF1744;
+  background: #120000;
+  box-shadow:
+    0 0 8px rgba(255, 23, 68, 0.2),
+    inset 0 0 8px rgba(255, 23, 68, 0.05);
+}
+
+.retro-btn-red:hover {
+  background: #1a0000;
+  box-shadow:
+    0 0 15px rgba(255, 23, 68, 0.4),
+    inset 0 0 12px rgba(255, 23, 68, 0.1);
+  transform: scale(1.02);
+}
+
+.retro-btn-red:active {
+  transform: scale(0.98);
+  background: #0d0000;
+  box-shadow:
+    0 0 5px rgba(255, 23, 68, 0.3),
+    inset 0 0 5px rgba(255, 23, 68, 0.05);
+}
+
+.retro-btn-red.active {
+  background: #1a0000;
+  color: #FF5252;
+  border-color: #FF5252;
+  box-shadow:
+    0 0 20px rgba(255, 23, 68, 0.6),
+    inset 0 0 20px rgba(255, 23, 68, 0.15),
+    0 0 40px rgba(255, 23, 68, 0.2);
+  animation: red-glow-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes red-glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 15px rgba(255, 23, 68, 0.4),
+      0 0 30px rgba(255, 23, 68, 0.2),
+      inset 0 0 15px rgba(255, 23, 68, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 25px rgba(255, 23, 68, 0.6),
+      0 0 50px rgba(255, 23, 68, 0.3),
+      inset 0 0 20px rgba(255, 23, 68, 0.15);
+  }
 }
 
 /* ---------- Подпись снизу ---------- */
@@ -351,9 +442,9 @@ body::before {
   text-align: center;
   font-family: 'Press Start 2P', 'Courier New', monospace;
   font-size: 9px;
-  color: #554400;
+  color: var(--footer-color);
   letter-spacing: 3px;
   text-transform: uppercase;
-  text-shadow: 0 0 4px rgba(255, 235, 59, 0.1);
+  text-shadow: 0 0 4px var(--footer-glow);
   z-index: 1;
 }

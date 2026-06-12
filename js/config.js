@@ -102,6 +102,17 @@ const CONFIG = {
     Z: { main: '#FFCA28', light: '#FFE082', dark: '#FF8F00' }, // медовый
   },
 
+  // ---------- Цвета фигур (неоновый красно-чёрный стиль для HARD MODE) ----------
+  PIECE_COLORS_NEON_RED: {
+    I: { main: '#FF1744', light: '#FF8A80', dark: '#C62828' }, // яркий красный
+    O: { main: '#D50000', light: '#FF6D6D', dark: '#8E0000' }, // тёмно-красный
+    T: { main: '#FF5252', light: '#FF8A80', dark: '#B71C1C' }, // красный
+    L: { main: '#FF6D6D', light: '#FFCDD2', dark: '#C62828' }, // светло-красный
+    J: { main: '#E53935', light: '#FF8A80', dark: '#B71C1C' }, // алый
+    S: { main: '#EF5350', light: '#FFCDD2', dark: '#C62828' }, // кармин
+    Z: { main: '#F44336', light: '#FF8A80', dark: '#B71C1C' }, // красно-алый
+  },
+
   // Текущий активный стиль раскраски фигур ('neon' | 'colorful')
   _pieceStyle: 'neon',
 
@@ -116,6 +127,9 @@ const CONFIG = {
 
   /** Получить текущую палитру цветов фигур */
   getCurrentPieceColors() {
+    if (this._hardMode) {
+      return this.PIECE_COLORS_NEON_RED;
+    }
     return this._pieceStyle === 'colorful' ? this.PIECE_COLORS : this.PIECE_COLORS_NEON;
   },
 
@@ -171,7 +185,144 @@ const CONFIG = {
 
     // Тень от фигур на поле
     pieceGlow: 'rgba(255, 235, 59, 0.15)',
+
+    // ---------- CSS-элементы (фон, украшения, кнопки, футер) ----------
+    css: {
+      canvasBorder: '#FFEB3B',
+      canvasGlow1: 'rgba(255, 235, 59, 0.4)',
+      canvasGlow2: 'rgba(255, 235, 59, 0.15)',
+      canvasGlow3: 'rgba(255, 235, 59, 0.08)',
+      canvasGlowInset: 'rgba(255, 235, 59, 0.05)',
+      canvasGlowPulse1: 'rgba(255, 235, 59, 0.6)',
+      canvasGlowPulse2: 'rgba(255, 235, 59, 0.25)',
+      canvasGlowPulse3: 'rgba(255, 235, 59, 0.12)',
+      canvasGlowPulseInset: 'rgba(255, 235, 59, 0.08)',
+
+      bgRadialGlow: 'rgba(255, 235, 59, 0.06)',
+      bgGradient: 'linear-gradient(180deg, #0a0a0a 0%, #121205 50%, #0a0a0a 100%)',
+
+      pixelColor: 'rgba(255, 235, 59, 0.15)',
+      starColor: 'rgba(255, 235, 59, 0.3)',
+      starGlow1: 'rgba(255, 235, 59, 0.1)',
+      starGlow2: 'rgba(255, 235, 59, 0.4)',
+
+      cornerColor: '#FFEB3B',
+      lineColor: '#FFEB3B',
+
+      footerColor: '#554400',
+      footerGlow: 'rgba(255, 235, 59, 0.1)',
+
+      buttonBg: '#121200',
+      buttonBorder: '#FFEB3B',
+      buttonText: '#FFEB3B',
+      buttonHoverBg: '#1a1a00',
+      buttonGlow1: 'rgba(255, 235, 59, 0.2)',
+      buttonGlow2: 'rgba(255, 235, 59, 0.4)',
+      buttonGlow3: 'rgba(255, 235, 59, 0.05)',
+      buttonGlowHover1: 'rgba(255, 235, 59, 0.4)',
+      buttonGlowHover2: 'rgba(255, 235, 59, 0.1)',
+      buttonGlowActive1: 'rgba(255, 235, 59, 0.3)',
+      buttonGlowActive2: 'rgba(255, 235, 59, 0.05)',
+    },
   },
+
+  // ---------- Тема NeoRetro Red (для HARD MODE) ----------
+  THEME_RED: {
+    pageBg: '#0a0a0a',
+    pageBgGradient: 'linear-gradient(180deg, #0a0a0a 0%, #120505 50%, #0a0a0a 100%)',
+
+    boardBg: '#0d0606',
+    boardBorder: '#FF1744',
+    boardBorderGlow: 'rgba(255, 23, 68, 0.3)',
+    cellBorder: '#1a0000',
+
+    // Сетка — в hard mode она не рисуется, но оставляем для совместимости
+    gridLines: 'rgba(255, 23, 68, 0.08)',
+
+    panelBg: '#0a0000',
+    panelBorder: '#FF1744',
+    panelText: '#FF1744',
+    panelLabel: '#FF5252',
+
+    textPrimary: '#FF1744',
+    textSecondary: '#FF5252',
+    textMuted: '#550000',
+
+    gameOverBg: 'rgba(0, 0, 0, 0.88)',
+    gameOverText: '#FF5252',
+    gameOverGlow: 'rgba(255, 82, 82, 0.5)',
+
+    pauseText: '#FF1744',
+
+    buttonBg: '#120000',
+    buttonBorder: '#FF1744',
+    buttonText: '#FF1744',
+    buttonHoverBg: '#1a0000',
+
+    scoreText: '#FF1744',
+    scoreValue: '#FFFFFF',
+
+    pieceGlow: 'rgba(255, 23, 68, 0.15)',
+
+    // ---------- CSS-элементы (фон, украшения, кнопки, футер) — красные ----------
+    css: {
+      canvasBorder: '#FF1744',
+      canvasGlow1: 'rgba(255, 23, 68, 0.4)',
+      canvasGlow2: 'rgba(255, 23, 68, 0.15)',
+      canvasGlow3: 'rgba(255, 23, 68, 0.08)',
+      canvasGlowInset: 'rgba(255, 23, 68, 0.05)',
+      canvasGlowPulse1: 'rgba(255, 23, 68, 0.6)',
+      canvasGlowPulse2: 'rgba(255, 23, 68, 0.25)',
+      canvasGlowPulse3: 'rgba(255, 23, 68, 0.12)',
+      canvasGlowPulseInset: 'rgba(255, 23, 68, 0.08)',
+
+      bgRadialGlow: 'rgba(255, 23, 68, 0.06)',
+      bgGradient: 'linear-gradient(180deg, #0a0a0a 0%, #120505 50%, #0a0a0a 100%)',
+
+      pixelColor: 'rgba(255, 23, 68, 0.15)',
+      starColor: 'rgba(255, 23, 68, 0.3)',
+      starGlow1: 'rgba(255, 23, 68, 0.1)',
+      starGlow2: 'rgba(255, 23, 68, 0.4)',
+
+      cornerColor: '#FF1744',
+      lineColor: '#FF1744',
+
+      footerColor: '#550000',
+      footerGlow: 'rgba(255, 23, 68, 0.1)',
+
+      buttonBg: '#120000',
+      buttonBorder: '#FF1744',
+      buttonText: '#FF1744',
+      buttonHoverBg: '#1a0000',
+      buttonGlow1: 'rgba(255, 23, 68, 0.2)',
+      buttonGlow2: 'rgba(255, 23, 68, 0.4)',
+      buttonGlow3: 'rgba(255, 23, 68, 0.05)',
+      buttonGlowHover1: 'rgba(255, 23, 68, 0.4)',
+      buttonGlowHover2: 'rgba(255, 23, 68, 0.1)',
+      buttonGlowActive1: 'rgba(255, 23, 68, 0.3)',
+      buttonGlowActive2: 'rgba(255, 23, 68, 0.05)',
+    },
+  },
+
+
+  // ---------- HARD MODE ----------
+  _hardMode: false,
+
+  get hardMode() {
+    return this._hardMode;
+  },
+
+  set hardMode(value) {
+    this._hardMode = value;
+  },
+
+  /** Получить текущую тему в зависимости от hard mode */
+  getCurrentTheme() {
+    return this._hardMode ? this.THEME_RED : this.THEME;
+  },
+
+  // Множитель скорости для hard mode (0.5 = в 2 раза быстрее)
+  HARD_MODE_SPEED_MULTIPLIER: 0.5,
 
   // ---------- Клавиши ----------
   KEYS: {

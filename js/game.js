@@ -52,6 +52,11 @@ class Game {
 
     this.state = 'playing';
     this.lastDropTime = performance.now();
+
+    // Запускаем музыку, если hard mode активен
+    if (CONFIG.hardMode) {
+      this.audio.playMusic();
+    }
   }
 
   /** Рестарт */
@@ -79,7 +84,7 @@ class Game {
     // Обработка удержания клавиш (DAS/ARR)
     this.input.update(now);
 
-    const interval = this.scoreManager.dropInterval;
+    const interval = this.scoreManager.getDropInterval();
     if (now - this.lastDropTime >= interval) {
       this.lastDropTime = now;
       this._moveDown();

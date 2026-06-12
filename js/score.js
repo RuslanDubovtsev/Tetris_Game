@@ -39,6 +39,15 @@ class ScoreManager {
     }
   }
 
+  /** Получить актуальный интервал падения с учётом hard mode */
+  getDropInterval() {
+    let interval = this.dropInterval;
+    if (CONFIG.hardMode) {
+      interval *= CONFIG.HARD_MODE_SPEED_MULTIPLIER;
+    }
+    return interval;
+  }
+
   /** Добавляет очки за hard drop (1 очко за каждую клетку) */
   addHardDropBonus(cellsDropped) {
     this.score += cellsDropped * 2;

@@ -25,7 +25,8 @@ class Renderer {
   /** Главный метод отрисовки */
   render(board, activePiece, nextPiece, scoreManager, gameState, holdPiece) {
     const ctx = this.ctx;
-    const theme = CONFIG.THEME;
+    const theme = CONFIG.getCurrentTheme();
+    const isHardMode = CONFIG.hardMode;
 
     // Очистка
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -40,8 +41,8 @@ class Renderer {
     // --- Игровое поле ---
     this._drawBoard(board);
 
-    // --- Ghost piece (полупрозрачная подсказка) ---
-    if (activePiece && gameState === 'playing') {
+    // --- Ghost piece (полупрозрачная подсказка) — СКРЫТ В HARD MODE ---
+    if (activePiece && gameState === 'playing' && !isHardMode) {
       const ghostRow = this._getGhostRow(board, activePiece);
       if (ghostRow !== activePiece.row) {
         const ghostColor = CONFIG.getPieceColor(activePiece.type);
@@ -55,8 +56,10 @@ class Renderer {
       this._drawPiece(activePiece.matrix, activePiece.row, activePiece.col, pieceColor);
     }
 
-    // --- Сетка поверх ---
-    this._drawGrid();
+    // --- Сетка поверх — СКРЫТА В HARD MODE ---
+    if (!isHardMode) {
+      this._drawGrid();
+    }
 
     // --- Боковая панель ---
     this._drawPanel(nextPiece, scoreManager, holdPiece);
@@ -78,7 +81,7 @@ class Renderer {
   /** Рисует заголовок TETRIS */
   _drawTitle() {
     const ctx = this.ctx;
-    const theme = CONFIG.THEME;
+    const theme = CONFIG.getCurrentTheme();
 
     ctx.save();
     ctx.font = 'bold 28px "Courier New", monospace';
@@ -98,7 +101,7 @@ class Renderer {
   /** Рисует фон игрового поля */
   _drawBoard(board) {
     const ctx = this.ctx;
-    const theme = CONFIG.THEME;
+    const theme = CONFIG.getCurrentTheme();
     const ox = this.boardOffsetX;
     const oy = this.boardOffsetY;
 
@@ -123,13 +126,13 @@ class Renderer {
     const ctx = this.ctx;
     const s = this.cellSize;
 
-    if (CONFIG.pieceStyle === 'neon') {
-      // Неоновый стиль: Чёрная заливка + жёлтая граница
+    if (CONFIG.hardMode || CONFIG.pieceStyle === 'neon') {
+      // Неоновый стиль: Чёрная заливка + цветная граница
       const inset = 1;
       // Чёрный фон
       ctx.fillStyle = '#000000';
       ctx.fillRect(x + inset, y + inset, s - inset * 2, s - inset * 2);
-      // Жёлтая граница (border)
+      // Цветная граница (border)
       ctx.strokeStyle = color.main;
       ctx.lineWidth = 2;
       ctx.strokeRect(x + inset, y + inset, s - inset * 2, s - inset * 2);
@@ -191,7 +194,7 @@ class Renderer {
   /** Рисует сетку (линии между ячейками) */
   _drawGrid() {
     const ctx = this.ctx;
-    const theme = CONFIG.THEME;
+    const theme = CONFIG.getCurrentTheme();
     const ox = this.boardOffsetX;
     const oy = this.boardOffsetY;
 
@@ -220,7 +223,7 @@ class Renderer {
   /** Рисует неоновую рамку вокруг поля */
   _drawBoardBorder() {
     const ctx = this.ctx;
-    const theme = CONFIG.THEME;
+    const theme = CONFIG.getCurrentTheme();
     const ox = this.boardOffsetX;
     const oy = this.boardOffsetY;
 
@@ -254,7 +257,7 @@ class Renderer {
   /** Рисует боковую панель */
   _drawPanel(nextPiece, scoreManager, holdPiece) {
     const ctx = this.ctx;
-    const theme = CONFIG.THEME;
+    const theme = CONFIG.getCurrentTheme();
     const px = this.boardWidth + 15;
     const py = this.boardOffsetY;
 
@@ -385,9 +388,10 @@ class Renderer {
     const ctx = this.ctx;
     const cx = this.canvas.width / 2;
     const cy = this.canvas.height / 2;
+    const theme = CONFIG.getCurrentTheme();
 
     ctx.save();
-    ctx.fillStyle = CONFIG.THEME.gameOverBg;
+    ctx.fillStyle = theme.gameOverBg;
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     ctx.textAlign = 'center';
@@ -405,7 +409,7 @@ class Renderer {
     ctx.shadowBlur = 0;
     if (subtitle) {
       ctx.font = '16px "Courier New", monospace';
-      ctx.fillStyle = CONFIG.THEME.textSecondary;
+      ctx.fillStyle = theme.textSecondary;
       ctx.fillText(subtitle, cx, cy + 40);
     }
 

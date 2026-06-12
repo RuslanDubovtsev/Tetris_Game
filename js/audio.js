@@ -1,8 +1,8 @@
 // ============================================================
-// AUDIO — менеджер звуков (Web Audio API / Синтезатор)
+// AUDIO — менеджер звуков (Web Audio API / Синтезатор + музыка)
 // ============================================================
 // Генерирует ретро-неоновые звуки в реальном времени
-// без внешних аудиофайлов.
+// без внешних аудиофайлов + проигрывание музыки из /assets/music
 // ============================================================
 
 class AudioManager {
@@ -12,6 +12,13 @@ class AudioManager {
     this._initialized = false;
     this._muted = false;
     this._enabled = true;
+
+    // Музыка
+    this.musicGain = null;
+    this.musicSource = null;
+    this.musicBuffer = null;
+    this._musicLoaded = false;
+    this._musicPlaying = false;
 
     // Список доступных звуков
     this.sounds = {};
@@ -28,11 +35,30 @@ class AudioManager {
       this.masterGain = this.ctx.createGain();
       this.masterGain.gain.value = 0.35;  // общая громкость
       this.masterGain.connect(this.ctx.destination);
+
+      // Отдельный канал для музыки
+      this.musicGain = this.ctx.createGain();
+      this.musicGain.gain.value = 0.4; // громкость музыки
+      this.musicGain.connect(this.masterGain);
+
       this._initialized = true;
       this._buildSounds();
+      this._loadMusic();
     } catch (e) {
       console.warn('AudioManager: AudioContext не поддерживается');
       this._enabled = false;
+    }
+  }
+
+  /** Загрузка музыкального файла */
+  async _loadMusic() {
+    try {
+      const response = await fetch('assets/music/Хард-мод Падение.mp3');
+      const arrayBuffer = await response.arrayBuffer();
+      this.musicBuffer = await this.ctx.decodeAudioData(arrayBuffer);
+      this._musicLoaded = true;
+    } catch (e) {
+      console.warn('AudioManager: Не удалось загрузить музыку', e);
     }
   }
 
@@ -90,11 +116,23 @@ class AudioManager {
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.value = 0.35;
     this.masterGain.connect(this.ctx.destination);
+
+    this.musicGain = this.ctx.createGain();
+    this.musicGain.gain.value = 0.4;
+    this.musicGain.connect(this.masterGain);
   }
 
   /** Включить / выключить звук */
   toggleMute() {
     this._muted = !this._muted;
+    if (this._muted) {
+      this.stopMusic();
+    } else {
+      // Если музыка играла, возобновляем
+      if (this._musicPlaying) {
+        this.playMusic();
+      }
+    }
     return this._muted;
   }
 
@@ -108,6 +146,47 @@ class AudioManager {
     if (this.masterGain) {
       this.masterGain.gain.value = Math.max(0, Math.min(1, val));
     }
+  }
+
+  // ============================================================
+  // УПРАВЛЕНИЕ МУЗЫКОЙ
+  // ============================================================
+
+  /** Запустить музыку */
+  playMusic() {
+    if (!this._enabled || this._muted) return;
+    if (!this._initialized) this.init();
+    if (!this._musicLoaded || !this.ctx || this._musicPlaying) return;
+
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+
+    this.musicSource = this.ctx.createBufferSource();
+    this.musicSource.buffer = this.musicBuffer;
+    this.musicSource.loop = true;
+    this.musicSource.connect(this.musicGain);
+    this.musicSource.start(0);
+    this._musicPlaying = true;
+  }
+
+  /** Остановить музыку */
+  stopMusic() {
+    if (this.musicSource && this._musicPlaying) {
+      try {
+        this.musicSource.stop();
+      } catch (e) {
+        // игнорируем
+      }
+      this.musicSource.disconnect();
+      this.musicSource = null;
+      this._musicPlaying = false;
+    }
+  }
+
+  /** Музыка сейчас играет? */
+  get isMusicPlaying() {
+    return this._musicPlaying;
   }
 
   // ============================================================
