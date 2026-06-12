@@ -5,6 +5,10 @@
 class InputHandler {
   constructor() {
     this._keys = {};
+    this._holdStates = {}; // { code: { pressedAt, lastRepeatAt, dasTriggered } }
+    this.DAS_DELAY = 170;  // задержка перед авто-повтором (ms)
+    this.ARR_INTERVAL = 50; // интервал авто-повтора (ms)
+
     this._onKeyDown = this._onKeyDown.bind(this);
     this._onKeyUp = this._onKeyUp.bind(this);
 
@@ -30,36 +34,73 @@ class InputHandler {
     document.removeEventListener('keyup', this._onKeyUp);
   }
 
-  _onKeyDown(e) {
-    if (this._keys[e.code]) return; // защита от repeat
-    this._keys[e.code] = true;
+  /**
+   * Вызывается каждый кадр из игрового цикла
+   * Обрабатывает удержание клавиш движения (DAS/ARR)
+   */
+  update(now) {
+    const cfg = CONFIG.KEYS;
+    const movementCodes = [cfg.LEFT, cfg.RIGHT, cfg.DOWN];
 
+    for (const code of movementCodes) {
+      if (!this._keys[code]) continue;
+
+      const state = this._holdStates[code];
+      if (!state) continue;
+
+      const elapsed = now - state.pressedAt;
+
+      if (!state.dasTriggered) {
+        // DAS ещё не сработал — ждём
+        if (elapsed >= this.DAS_DELAY) {
+          state.dasTriggered = true;
+          state.lastRepeatAt = now;
+          this._fireByCode(code);
+        }
+      } else {
+        // DAS сработал — повторяем с интервалом ARR
+        if (now - state.lastRepeatAt >= this.ARR_INTERVAL) {
+          state.lastRepeatAt = now;
+          this._fireByCode(code);
+        }
+      }
+    }
+  }
+
+  _onKeyDown(e) {
     const key = e.key;
     const code = e.code;
-
     const cfg = CONFIG.KEYS;
 
-    // ←
-    if (code === cfg.LEFT && this.onMoveLeft) {
-      e.preventDefault();
-      this.onMoveLeft();
+    // Определяем, является ли клавиша клавишей движения
+    const isMovement = (code === cfg.LEFT || code === cfg.RIGHT || code === cfg.DOWN);
+
+    if (isMovement) {
+      // Для клавиш движения не блокируем repeat,
+      // но обрабатываем только первый press
+      if (!this._keys[code]) {
+        this._keys[code] = true;
+        this._holdStates[code] = {
+          pressedAt: performance.now(),
+          lastRepeatAt: 0,
+          dasTriggered: false,
+        };
+        e.preventDefault();
+        this._fireByCode(code);
+      }
+      return;
     }
-    // →
-    else if (code === cfg.RIGHT && this.onMoveRight) {
-      e.preventDefault();
-      this.onMoveRight();
-    }
-    // ↓ — soft drop
-    else if (code === cfg.DOWN && this.onSoftDrop) {
-      e.preventDefault();
-      this.onSoftDrop();
-    }
+
+    // Для остальных клавиш — защита от repeat
+    if (this._keys[code]) return;
+    this._keys[code] = true;
+
     // Space — hard drop
-    else if (key === cfg.HARD_DROP && this.onHardDrop) {
+    if (key === cfg.HARD_DROP && this.onHardDrop) {
       e.preventDefault();
       this.onHardDrop();
     }
-    // ↑ или X — поворот (зарезервировано на будущее)
+    // ↑ или X — поворот
     else if ((code === 'ArrowUp' || key === 'x' || key === 'X') && this.onRotate) {
       e.preventDefault();
       this.onRotate();
@@ -77,6 +118,20 @@ class InputHandler {
   }
 
   _onKeyUp(e) {
-    this._keys[e.code] = false;
+    const code = e.code;
+    this._keys[code] = false;
+    delete this._holdStates[code];
+  }
+
+  /** Вызвать нужный callback по коду клавиши */
+  _fireByCode(code) {
+    const cfg = CONFIG.KEYS;
+    if (code === cfg.LEFT && this.onMoveLeft) {
+      this.onMoveLeft();
+    } else if (code === cfg.RIGHT && this.onMoveRight) {
+      this.onMoveRight();
+    } else if (code === cfg.DOWN && this.onSoftDrop) {
+      this.onSoftDrop();
+    }
   }
 }

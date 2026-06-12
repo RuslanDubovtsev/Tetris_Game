@@ -18,9 +18,6 @@ html, body {
 
 body {
   background: #0a0a0a;
-  background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(255, 235, 59, 0.04) 0%, transparent 70%),
-    linear-gradient(180deg, #0a0a0a 0%, #121205 50%, #0a0a0a 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,7 +26,11 @@ body {
   position: relative;
 }
 
-/* ---------- Пиксельное свечение на фоне ---------- */
+/* ============================================================
+   АНИМИРОВАННЫЙ ПИКСЕЛЬНЫЙ ФОН
+   ============================================================ */
+
+/* Основной фон с радиальным свечением */
 body::before {
   content: '';
   position: fixed;
@@ -40,24 +41,190 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background:
-    /* Верхнее центральное свечение */
+    /* Центральное свечение */
     radial-gradient(ellipse 600px 300px at 50% 10%, rgba(255, 235, 59, 0.06) 0%, transparent 100%),
-    /* Пиксельные "полосы" свечения */
-    repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent 3px,
-      rgba(255, 235, 59, 0.015) 3px,
-      rgba(255, 235, 59, 0.015) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0px,
-      transparent 3px,
-      rgba(255, 235, 59, 0.008) 3px,
-      rgba(255, 235, 59, 0.008) 4px
-    );
+    /* Тёмный градиент */
+    linear-gradient(180deg, #0a0a0a 0%, #121205 50%, #0a0a0a 100%);
 }
+
+/* Падающие пиксели — анимация */
+#pixel-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.pixel {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 235, 59, 0.15);
+  image-rendering: pixelated;
+  animation: pixelFall linear infinite;
+}
+
+@keyframes pixelFall {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Мерцающие звёзды (пиксельные) */
+#pixel-stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.pixel-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 235, 59, 0.3);
+  image-rendering: pixelated;
+  animation: starTwinkle ease-in-out infinite alternate;
+}
+
+@keyframes starTwinkle {
+  0% {
+    opacity: 0.1;
+    box-shadow: 0 0 2px rgba(255, 235, 59, 0.1);
+  }
+  100% {
+    opacity: 0.8;
+    box-shadow: 0 0 4px rgba(255, 235, 59, 0.4);
+  }
+}
+
+/* ============================================================
+   ДЕКОРАТИВНЫЕ ПИКСЕЛЬНЫЕ ЭЛЕМЕНТЫ ВОКРУГ ПОЛЯ
+   ============================================================ */
+
+/* Верхний левый угол */
+.pixel-corner-tl {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 48px;
+  height: 48px;
+  z-index: 1;
+  pointer-events: none;
+  image-rendering: pixelated;
+  background:
+    /* Пиксельный угол */
+    linear-gradient(45deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px),
+    linear-gradient(-45deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px);
+  opacity: 0.3;
+}
+
+/* Верхний правый угол */
+.pixel-corner-tr {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  z-index: 1;
+  pointer-events: none;
+  image-rendering: pixelated;
+  background:
+    linear-gradient(135deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px),
+    linear-gradient(-135deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px);
+  opacity: 0.3;
+}
+
+/* Нижний левый угол */
+.pixel-corner-bl {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 48px;
+  height: 48px;
+  z-index: 1;
+  pointer-events: none;
+  image-rendering: pixelated;
+  background:
+    linear-gradient(-45deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px),
+    linear-gradient(45deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px);
+  opacity: 0.3;
+}
+
+/* Нижний правый угол */
+.pixel-corner-br {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  z-index: 1;
+  pointer-events: none;
+  image-rendering: pixelated;
+  background:
+    linear-gradient(135deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px),
+    linear-gradient(-135deg, #FFEB3B 0%, #FFEB3B 8px, transparent 8px);
+  opacity: 0.3;
+}
+
+/* Пиксельная линия сверху */
+.pixel-line-top {
+  position: fixed;
+  top: 40px;
+  left: 80px;
+  right: 80px;
+  height: 2px;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    #FFEB3B 0px,
+    #FFEB3B 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  opacity: 0.15;
+}
+
+/* Пиксельная линия снизу */
+.pixel-line-bottom {
+  position: fixed;
+  bottom: 40px;
+  left: 80px;
+  right: 80px;
+  height: 2px;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    #FFEB3B 0px,
+    #FFEB3B 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  opacity: 0.15;
+}
+
+/* ============================================================ */
 
 /* ---------- Обёртка игры ---------- */
 #game-wrapper {

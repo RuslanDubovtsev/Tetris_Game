@@ -71,6 +71,9 @@ class Game {
 
   /** Обновление логики */
   _update(now) {
+    // Обработка удержания клавиш (DAS/ARR)
+    this.input.update(now);
+
     const interval = this.scoreManager.dropInterval;
     if (now - this.lastDropTime >= interval) {
       this.lastDropTime = now;
