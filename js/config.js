@@ -147,5 +147,6 @@ const CONFIG = {
     HARD_DROP: ' ',
     ROTATE: ['ArrowUp', 'x', 'X'],
     PAUSE: ['p', 'P', 'Escape'],
+    HOLD: ['c', 'C'],
   },
 };

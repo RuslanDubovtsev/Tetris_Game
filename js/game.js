@@ -14,6 +14,10 @@ class Game {
     this.activePiece = null;
     this.nextPiece = null;
 
+    // Hold piece
+    this.holdPiece = null;
+    this.hasHeldThisTurn = false;
+
     this.dropTimer = null;
     this.lastDropTime = 0;
     this.animationId = null;
@@ -48,6 +52,9 @@ class Game {
 
   /** Рестарт */
   restart() {
+    // Сброс hold при рестарте
+    this.holdPiece = null;
+    this.hasHeldThisTurn = false;
     this.start();
   }
 
@@ -78,7 +85,8 @@ class Game {
       this.activePiece,
       this.nextPiece,
       this.scoreManager,
-      this.state
+      this.state,
+      this.holdPiece
     );
   }
 
@@ -207,6 +215,9 @@ class Game {
       return;
     }
 
+    // Сброс флага hold для нового хода
+    this.hasHeldThisTurn = false;
+
     // Спавн новой фигуры
     this._spawnNext();
   }
@@ -238,6 +249,7 @@ class Game {
     this.input.onHardDrop = () => this.hardDrop();
     this.input.onRotate = () => this.rotate();
     this.input.onPause = () => this.togglePause();
+    this.input.onHold = () => this.hold();
 
     // Enter для старта / рестарта
     document.addEventListener('keydown', (e) => {
@@ -247,6 +259,45 @@ class Game {
         }
       }
     });
+  }
+
+  // ============================================================
+  // HOLD PIECE
+  // ============================================================
+
+  /** Отложить / обменять фигуру (клавиша C) */
+  hold() {
+    if (this.state !== 'playing' || !this.activePiece || this.hasHeldThisTurn) return;
+
+    const currentType = this.activePiece.type;
+
+    if (this.holdPiece) {
+      // Обмен: берём отложенную фигуру
+      const heldType = this.holdPiece.type;
+      this.holdPiece = new Tetromino(currentType);
+      this.activePiece = new Tetromino(heldType);
+    } else {
+      // Первый раз: сохраняем текущую и берём следующую
+      this.holdPiece = new Tetromino(currentType);
+      this._spawnNext();
+    }
+
+    this.hasHeldThisTurn = true;
+  }
+
+  // ============================================================
+  // GHOST PIECE
+  // ============================================================
+
+  /** Вычисляет ghost piece (позицию приземления) */
+  getGhostRow() {
+    if (!this.activePiece) return 0;
+    const piece = this.activePiece;
+    let ghostRow = piece.row;
+    while (this.board.canPlace(piece.matrix, ghostRow + 1, piece.col)) {
+      ghostRow++;
+    }
+    return ghostRow;
   }
 }
 

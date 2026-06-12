@@ -15,6 +15,7 @@ class InputHandler {
     this.onHardDrop = null;
     this.onRotate = null;
     this.onPause = null;
+    this.onHold = null;
   }
 
   /** Привязка слушателей */
@@ -67,6 +68,11 @@ class InputHandler {
     else if ((key === 'p' || key === 'P' || code === 'Escape') && this.onPause) {
       e.preventDefault();
       this.onPause();
+    }
+    // C — hold piece
+    else if ((key === 'c' || key === 'C') && this.onHold) {
+      e.preventDefault();
+      this.onHold();
     }
   }
 

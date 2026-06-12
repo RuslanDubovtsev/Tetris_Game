@@ -13,7 +13,7 @@ class Renderer {
 
     // Основной canvas: поле + боковая панель
     this.boardWidth = this.cols * this.cellSize;
-    this.panelWidth = 180;
+    this.panelWidth = 220;
     this.canvas.width = this.boardWidth + this.panelWidth;
     this.canvas.height = this.rows * this.cellSize + 60; // доп. место для заголовка
 
@@ -23,7 +23,7 @@ class Renderer {
   }
 
   /** Главный метод отрисовки */
-  render(board, activePiece, nextPiece, scoreManager, gameState) {
+  render(board, activePiece, nextPiece, scoreManager, gameState, holdPiece) {
     const ctx = this.ctx;
     const theme = CONFIG.THEME;
 
@@ -40,6 +40,14 @@ class Renderer {
     // --- Игровое поле ---
     this._drawBoard(board);
 
+    // --- Ghost piece (полупрозрачная подсказка) ---
+    if (activePiece && gameState === 'playing') {
+      const ghostRow = this._getGhostRow(board, activePiece);
+      if (ghostRow !== activePiece.row) {
+        this._drawGhostPiece(activePiece.matrix, ghostRow, activePiece.col, activePiece.color);
+      }
+    }
+
     // --- Активная фигура ---
     if (activePiece && gameState === 'playing') {
       this._drawPiece(activePiece.matrix, activePiece.row, activePiece.col, activePiece.color);
@@ -49,7 +57,7 @@ class Renderer {
     this._drawGrid();
 
     // --- Боковая панель ---
-    this._drawPanel(nextPiece, scoreManager);
+    this._drawPanel(nextPiece, scoreManager, holdPiece);
 
     // --- Стартовый экран / Пауза / Game Over ---
     if (gameState === 'idle') {
@@ -129,6 +137,42 @@ class Renderer {
     ctx.fillRect(x + s - inset - 2, y + inset, 2, s - inset * 2);
   }
 
+  /** Рисует ghost piece — полупрозрачную копию фигуры в позиции приземления */
+  _drawGhostPiece(matrix, row, col, color) {
+    const ctx = this.ctx;
+    const ox = this.boardOffsetX;
+    const oy = this.boardOffsetY;
+    const s = this.cellSize;
+
+    ctx.save();
+    ctx.globalAlpha = 0.25;
+
+    for (let r = 0; r < matrix.length; r++) {
+      for (let c = 0; c < matrix[r].length; c++) {
+        if (matrix[r][c] !== 0) {
+          const x = ox + (col + c) * s;
+          const y = oy + (row + r) * s;
+
+          // Только обводка для ghost piece
+          ctx.strokeStyle = color.main;
+          ctx.lineWidth = 2;
+          ctx.strokeRect(x + 1, y + 1, s - 2, s - 2);
+        }
+      }
+    }
+
+    ctx.restore();
+  }
+
+  /** Вычисляет ghost row (позицию приземления) */
+  _getGhostRow(board, piece) {
+    let ghostRow = piece.row;
+    while (board.canPlace(piece.matrix, ghostRow + 1, piece.col)) {
+      ghostRow++;
+    }
+    return ghostRow;
+  }
+
   /** Рисует сетку (линии между ячейками) */
   _drawGrid() {
     const ctx = this.ctx;
@@ -193,23 +237,65 @@ class Renderer {
   }
 
   /** Рисует боковую панель */
-  _drawPanel(nextPiece, scoreManager) {
+  _drawPanel(nextPiece, scoreManager, holdPiece) {
     const ctx = this.ctx;
     const theme = CONFIG.THEME;
     const px = this.boardWidth + 15;
     const py = this.boardOffsetY;
 
-    // --- NEXT ---
     ctx.save();
+
+    // ===== HOLD =====
     ctx.font = 'bold 16px "Courier New", monospace';
     ctx.fillStyle = theme.panelLabel;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    ctx.fillText('▶ NEXT', px, py);
+    ctx.fillText('▶ HOLD', px, py);
+
+    // Рамка hold
+    const holdX = px;
+    const holdY = py + 25;
+    const holdSize = 4 * this.cellSize;
+
+    ctx.strokeStyle = theme.panelBorder;
+    ctx.lineWidth = 1;
+    ctx.shadowColor = theme.boardBorderGlow;
+    ctx.shadowBlur = 8;
+    ctx.strokeRect(holdX, holdY, holdSize, holdSize);
+    ctx.shadowBlur = 0;
+
+    // Фон hold
+    ctx.fillStyle = theme.panelBg;
+    ctx.fillRect(holdX + 1, holdY + 1, holdSize - 2, holdSize - 2);
+
+    // Hold фигура
+    if (holdPiece) {
+      const matrix = holdPiece.matrix;
+      const color = holdPiece.color;
+      const cols = matrix[0].length;
+      const rows = matrix.length;
+      const offsetX = holdX + (holdSize - cols * this.cellSize) / 2;
+      const offsetY = holdY + (holdSize - rows * this.cellSize) / 2;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (matrix[r][c] !== 0) {
+            this._drawCell(offsetX + c * this.cellSize, offsetY + r * this.cellSize, color);
+          }
+        }
+      }
+    }
+
+    // ===== NEXT =====
+    const nextY = holdY + holdSize + 15;
+    ctx.font = 'bold 16px "Courier New", monospace';
+    ctx.fillStyle = theme.panelLabel;
+    ctx.textAlign = 'left';
+    ctx.fillText('▶ NEXT', px, nextY);
 
     // Рамка для превью
     const previewX = px;
-    const previewY = py + 25;
+    const previewY = nextY + 25;
     const previewSize = 4 * this.cellSize;
 
     ctx.strokeStyle = theme.panelBorder;
