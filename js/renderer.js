@@ -118,25 +118,38 @@ class Renderer {
     }
   }
 
-  /** Рисует одну ячейку с объёмным эффектом */
+  /** Рисует одну ячейку с учётом текущего стиля */
   _drawCell(x, y, color) {
     const ctx = this.ctx;
     const s = this.cellSize;
-    const inset = 1;
 
-    // Основной цвет
-    ctx.fillStyle = color.main;
-    ctx.fillRect(x + inset, y + inset, s - inset * 2, s - inset * 2);
+    if (CONFIG.pieceStyle === 'neon') {
+      // Неоновый стиль: Чёрная заливка + жёлтая граница
+      const inset = 1;
+      // Чёрный фон
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(x + inset, y + inset, s - inset * 2, s - inset * 2);
+      // Жёлтая граница (border)
+      ctx.strokeStyle = color.main;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x + inset, y + inset, s - inset * 2, s - inset * 2);
+    } else {
+      // Цветной стиль: объёмный эффект (оригинал)
+      const inset = 1;
+      // Основной цвет
+      ctx.fillStyle = color.main;
+      ctx.fillRect(x + inset, y + inset, s - inset * 2, s - inset * 2);
 
-    // Светлая сторона (сверху и слева)
-    ctx.fillStyle = color.light;
-    ctx.fillRect(x + inset, y + inset, s - inset * 2, 2);
-    ctx.fillRect(x + inset, y + inset, 2, s - inset * 2);
+      // Светлая сторона (сверху и слева)
+      ctx.fillStyle = color.light;
+      ctx.fillRect(x + inset, y + inset, s - inset * 2, 2);
+      ctx.fillRect(x + inset, y + inset, 2, s - inset * 2);
 
-    // Тёмная сторона (снизу и справа)
-    ctx.fillStyle = color.dark;
-    ctx.fillRect(x + inset, y + s - inset - 2, s - inset * 2, 2);
-    ctx.fillRect(x + s - inset - 2, y + inset, 2, s - inset * 2);
+      // Тёмная сторона (снизу и справа)
+      ctx.fillStyle = color.dark;
+      ctx.fillRect(x + inset, y + s - inset - 2, s - inset * 2, 2);
+      ctx.fillRect(x + s - inset - 2, y + inset, 2, s - inset * 2);
+    }
   }
 
   /** Рисует ghost piece — полупрозрачную копию фигуры в позиции приземления */

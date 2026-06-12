@@ -64,9 +64,10 @@ body::before {
   position: relative;
   z-index: 1;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
 }
 
 /* ---------- Контейнер игры ---------- */
@@ -113,12 +114,29 @@ body::before {
   animation: glow-pulse 3s ease-in-out infinite;
 }
 
+/* ---------- Боковая панель (справа) ---------- */
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-top: 8px;
+}
+
 /* ---------- Панель управления ---------- */
 #controls-panel {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin-top: 8px;
+}
+
+/* ---------- Кнопка в боковой панели ---------- */
+.sidebar-btn {
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  letter-spacing: 4px;
+  padding: 20px 12px;
+  font-size: 11px;
 }
 
 /* ---------- Ретро-кнопка ---------- */
