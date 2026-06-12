@@ -13,7 +13,7 @@ class Renderer {
 
     // Основной canvas: поле + боковая панель
     this.boardWidth = this.cols * this.cellSize;
-    this.panelWidth = 220;
+    this.panelWidth = Math.max(200, Math.round(this.cellSize * 5.2));
     this.canvas.width = this.boardWidth + this.panelWidth;
     this.canvas.height = this.rows * this.cellSize + 60; // доп. место для заголовка
 
@@ -44,13 +44,15 @@ class Renderer {
     if (activePiece && gameState === 'playing') {
       const ghostRow = this._getGhostRow(board, activePiece);
       if (ghostRow !== activePiece.row) {
-        this._drawGhostPiece(activePiece.matrix, ghostRow, activePiece.col, activePiece.color);
+        const ghostColor = CONFIG.getPieceColor(activePiece.type);
+        this._drawGhostPiece(activePiece.matrix, ghostRow, activePiece.col, ghostColor);
       }
     }
 
     // --- Активная фигура ---
     if (activePiece && gameState === 'playing') {
-      this._drawPiece(activePiece.matrix, activePiece.row, activePiece.col, activePiece.color);
+      const pieceColor = CONFIG.getPieceColor(activePiece.type);
+      this._drawPiece(activePiece.matrix, activePiece.row, activePiece.col, pieceColor);
     }
 
     // --- Сетка поверх ---
@@ -109,7 +111,7 @@ class Renderer {
       for (let col = 0; col < this.cols; col++) {
         const cell = board.grid[row][col];
         if (cell !== null) {
-          const color = CONFIG.PIECE_COLORS[cell];
+          const color = CONFIG.getPieceColor(cell);
           this._drawCell(ox + col * this.cellSize, oy + row * this.cellSize, color);
         }
       }
@@ -271,7 +273,7 @@ class Renderer {
     // Hold фигура
     if (holdPiece) {
       const matrix = holdPiece.matrix;
-      const color = holdPiece.color;
+      const color = CONFIG.getPieceColor(holdPiece.type);
       const cols = matrix[0].length;
       const rows = matrix.length;
       const offsetX = holdX + (holdSize - cols * this.cellSize) / 2;
@@ -312,7 +314,7 @@ class Renderer {
     // Следующая фигура
     if (nextPiece) {
       const matrix = nextPiece.matrix;
-      const color = nextPiece.color;
+      const color = CONFIG.getPieceColor(nextPiece.type);
       const cols = matrix[0].length;
       const rows = matrix.length;
       const offsetX = previewX + (previewSize - cols * this.cellSize) / 2;

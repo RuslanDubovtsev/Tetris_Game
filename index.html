@@ -4,11 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TETRIS — NeoRetro</title>
+  <!-- Пиксельный шрифт Press Start 2P -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div id="game-container">
-    <canvas id="game-canvas"></canvas>
+  <div id="game-wrapper">
+    <div id="game-container">
+      <canvas id="game-canvas"></canvas>
+    </div>
+    <div id="controls-panel">
+      <button id="style-toggle" class="retro-btn">🎨 ЦВЕТНОЙ СТИЛЬ</button>
+    </div>
   </div>
   <div id="footer">TETRIS · NEO RETRO</div>
 

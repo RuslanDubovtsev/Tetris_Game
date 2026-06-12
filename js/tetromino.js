@@ -9,7 +9,7 @@ class Tetromino {
   constructor(type) {
     this.type = type;
     this.matrix = cloneMatrix(CONFIG.PIECES[type].matrix);
-    this.color = CONFIG.PIECE_COLORS[type];
+    this.color = CONFIG.getPieceColor(type);
     this.row = 0;
     this.col = Math.floor((CONFIG.COLS - this.matrix[0].length) / 2);
   }

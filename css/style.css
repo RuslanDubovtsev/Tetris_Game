@@ -1,5 +1,6 @@
 /* ============================================================
    STYLE — ретро-стиль (чёрный фон + жёлтый неон)
+   Пиксельный шрифт: Press Start 2P
    ============================================================ */
 
 /* ---------- Сброс и база ---------- */
@@ -18,13 +19,54 @@ html, body {
 body {
   background: #0a0a0a;
   background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(255, 215, 0, 0.03) 0%, transparent 60%),
-    linear-gradient(135deg, #0a0a0a 0%, #1a1a0a 100%);
+    radial-gradient(ellipse at 50% 0%, rgba(255, 235, 59, 0.04) 0%, transparent 70%),
+    linear-gradient(180deg, #0a0a0a 0%, #121205 50%, #0a0a0a 100%);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Courier New', monospace;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
   min-height: 100vh;
+  position: relative;
+}
+
+/* ---------- Пиксельное свечение на фоне ---------- */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    /* Верхнее центральное свечение */
+    radial-gradient(ellipse 600px 300px at 50% 10%, rgba(255, 235, 59, 0.06) 0%, transparent 100%),
+    /* Пиксельные "полосы" свечения */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255, 235, 59, 0.015) 3px,
+      rgba(255, 235, 59, 0.015) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255, 235, 59, 0.008) 3px,
+      rgba(255, 235, 59, 0.008) 4px
+    );
+}
+
+/* ---------- Обёртка игры ---------- */
+#game-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 /* ---------- Контейнер игры ---------- */
@@ -38,14 +80,80 @@ body {
 /* ---------- Canvas ---------- */
 #game-canvas {
   display: block;
-  border: 2px solid #ffd700;
+  border: 3px solid #FFEB3B;
   box-shadow:
-    0 0 20px rgba(255, 215, 0, 0.3),
-    0 0 60px rgba(255, 215, 0, 0.1),
-    inset 0 0 20px rgba(255, 215, 0, 0.05);
+    0 0 15px rgba(255, 235, 59, 0.4),
+    0 0 40px rgba(255, 235, 59, 0.15),
+    0 0 80px rgba(255, 235, 59, 0.08),
+    inset 0 0 15px rgba(255, 235, 59, 0.05);
   border-radius: 4px;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+/* ---------- Анимация мерцания ---------- */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 15px rgba(255, 235, 59, 0.4),
+      0 0 40px rgba(255, 235, 59, 0.15),
+      0 0 80px rgba(255, 235, 59, 0.08),
+      inset 0 0 15px rgba(255, 235, 59, 0.05);
+  }
+  50% {
+    box-shadow:
+      0 0 25px rgba(255, 235, 59, 0.6),
+      0 0 60px rgba(255, 235, 59, 0.25),
+      0 0 100px rgba(255, 235, 59, 0.12),
+      inset 0 0 20px rgba(255, 235, 59, 0.08);
+  }
+}
+
+#game-canvas {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* ---------- Панель управления ---------- */
+#controls-panel {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* ---------- Ретро-кнопка ---------- */
+.retro-btn {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 10px;
+  padding: 12px 20px;
+  background: #121200;
+  color: #FFEB3B;
+  border: 2px solid #FFEB3B;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.15s ease;
+  box-shadow:
+    0 0 8px rgba(255, 235, 59, 0.2),
+    inset 0 0 8px rgba(255, 235, 59, 0.05);
+  image-rendering: pixelated;
+  position: relative;
+}
+
+.retro-btn:hover {
+  background: #1a1a00;
+  box-shadow:
+    0 0 15px rgba(255, 235, 59, 0.4),
+    inset 0 0 12px rgba(255, 235, 59, 0.1);
+  transform: scale(1.02);
+}
+
+.retro-btn:active {
+  transform: scale(0.98);
+  background: #0d0d00;
+  box-shadow:
+    0 0 5px rgba(255, 235, 59, 0.3),
+    inset 0 0 5px rgba(255, 235, 59, 0.05);
 }
 
 /* ---------- Подпись снизу ---------- */
@@ -55,27 +163,11 @@ body {
   left: 0;
   right: 0;
   text-align: center;
-  font-family: 'Courier New', monospace;
-  font-size: 11px;
-  color: #665500;
-  letter-spacing: 2px;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 9px;
+  color: #554400;
+  letter-spacing: 3px;
   text-transform: uppercase;
-}
-
-/* ---------- Анимация мерцания ---------- */
-@keyframes glow-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 20px rgba(255, 215, 0, 0.3),
-      0 0 60px rgba(255, 215, 0, 0.1);
-  }
-  50% {
-    box-shadow:
-      0 0 30px rgba(255, 215, 0, 0.5),
-      0 0 80px rgba(255, 215, 0, 0.2);
-  }
-}
-
-#game-canvas {
-  animation: glow-pulse 3s ease-in-out infinite;
+  text-shadow: 0 0 4px rgba(255, 235, 59, 0.1);
+  z-index: 1;
 }
