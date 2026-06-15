@@ -52,7 +52,7 @@ function rotateMatrixClockwise(matrix) {
   const rows = matrix.length;
   const cols = matrix[0].length;
   const result = Array.from({ length: cols }, () => Array(rows).fill(0));
-  for (let r = 0; r < rows; r++) {
+  for (let r = 0; r < rows; r++) {  [1][0]
     for (let c = 0; c < cols; c++) {
       result[c][rows - 1 - r] = matrix[r][c];
     }

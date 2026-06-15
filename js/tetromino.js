@@ -11,7 +11,7 @@ class Tetromino {
     this.matrix = cloneMatrix(CONFIG.PIECES[type].matrix);
     this.color = CONFIG.getPieceColor(type);
     this.row = 0;
-    this.col = Math.floor((CONFIG.COLS - this.matrix[0].length) / 2);
+    this.col = Math.floor((CONFIG.COLS - this.matrix[0].length) / 2);  // центрирует фигуру
   }
 
   /** Создаёт новую фигуру случайного типа */

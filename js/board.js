@@ -71,7 +71,7 @@ class Board {
         this.grid.splice(row, 1);
         this.grid.unshift(Array(this.cols).fill(null));
         cleared++;
-        row++; // проверяем эту же строку снова (после сдвига)
+        row++; // проверяем эту же строку снова, потому что на месте старой строки появится новая из-за того, что старая строка была удалена
       }
     }
     return cleared;

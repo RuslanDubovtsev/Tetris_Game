@@ -6,11 +6,12 @@
 function createPixelRain() {
   const container = document.getElementById('pixel-rain');
   if (!container) return;
+
   for (let i = 0; i < 60; i++) {
     const pixel = document.createElement('div');
     pixel.className = 'pixel';
     pixel.style.left = Math.random() * 100 + '%';
-    pixel.style.animationDuration = (3 + Math.random() * 7) + 's';
+    // pixel.style.animationDuration = (3 + Math.random() * 7) + 's';
     pixel.style.animationDelay = -(Math.random() * 10) + 's';
     pixel.style.width = (2 + Math.random() * 3) + 'px';
     pixel.style.height = pixel.style.width;
@@ -73,6 +74,14 @@ function applyCSSTheme() {
   root.style.setProperty('--button-glow-hover-2', css.buttonGlowHover2);
   root.style.setProperty('--button-glow-active-1', css.buttonGlowActive1);
   root.style.setProperty('--button-glow-active-2', css.buttonGlowActive2);
+
+  const pixels = document.querySelectorAll('.pixel')
+  let number = CONFIG.hardMode ? 1 : 7
+  pixels.forEach(pixel => {
+    console.log(number)
+    pixel.style.animationDuration = (3 + Math.random() * number) + 's';
+  })
+  
 }
 
 createPixelRain();
